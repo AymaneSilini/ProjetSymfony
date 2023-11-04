@@ -18,12 +18,12 @@ class CategoriesFixtures extends Fixture
     {
         $parent = new Categories();
         $parent->setName('Informatique');
-        $parent->setSlug($this->slugger->slug($parent->getName()));
+        $parent->setSlug($this->slugger->slug($parent->getName())->lower());
         $manager->persist($parent);
 
         $category = new Categories();
         $category->setName('Ordinateur portable');
-        $category->setSlug($this->slugger->slug($category->getName()));
+        $category->setSlug($this->slugger->slug($category->getName())->lower());
         $category->setParent($parent);
         $manager->persist($category);
 
