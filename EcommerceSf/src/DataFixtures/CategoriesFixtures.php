@@ -18,7 +18,7 @@ class CategoriesFixtures extends Fixture
     {
         //functional way
         $parent = $this->createCategory('Informatique', null, $manager);
-        $this->createCategory('Informatique', $parent, $manager);
+        $this->createCategory('Ordinateur Portable', $parent, $manager);
 
         $manager->flush();
 
@@ -44,7 +44,7 @@ class CategoriesFixtures extends Fixture
     {
         $category = new Categories();
         $category->setName($name);
-        $category->setSlug($this->slugger->slug($parent->getName())->lower());
+        $category->setSlug($this->slugger->slug($category->getName())->lower());
         $category->setParent($parent);
         $manager->persist($category);
 
