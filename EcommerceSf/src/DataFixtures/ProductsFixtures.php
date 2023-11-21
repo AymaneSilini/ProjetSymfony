@@ -25,12 +25,15 @@ class ProductsFixtures extends Fixture
             $product->setSlug($this->slugger->slug($product->getName())->lower());
             $product->setPrice($faker->numberBetween(900, 10000));
             $product->setStock($faker->numberBetween(0, 10));
-            //we get a category reference
+            //we get a category reference from CategoryFixtures
             $category = $this->getReference('cat-' . rand(1, 7));
             //dump($category->getName());
             $product->setCategories($category);
+
+            //stock a reference that can be returned in the ImagesFixtures
+            $this->setReference('prod-' . $prod, $product);
             $manager->persist($product);
-            $manager->flush();
         }
+        $manager->flush();
     }
 }
