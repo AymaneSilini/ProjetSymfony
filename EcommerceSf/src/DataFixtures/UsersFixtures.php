@@ -6,14 +6,12 @@ use App\Entity\Users;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Faker;
 
 class UsersFixtures extends Fixture
 {
     public function __construct(
-        private UserPasswordHasherInterface $passwordEncoder,
-        private SluggerInterface $slugger
+        private UserPasswordHasherInterface $passwordEncoder
     ) {
     }
 

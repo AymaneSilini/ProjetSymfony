@@ -13,12 +13,20 @@ class CategoriesFixtures extends Fixture
     public function __construct(private SluggerInterface $slugger)
     {
     }
+    private $counter = 1;
 
     public function load(ObjectManager $manager): void
     {
         //functional way
         $parent = $this->createCategory('Informatique', null, $manager);
         $this->createCategory('Ordinateur Portable', $parent, $manager);
+        $this->createCategory('Ordinateur Fixe', $parent, $manager);
+
+        $parent = $this->createCategory('Mode', null, $manager);
+        $this->createCategory('Homme', $parent, $manager);
+        $this->createCategory('Femme', $parent, $manager);
+        $this->createCategory('Enfant', $parent, $manager);
+
 
         $manager->flush();
 
@@ -47,6 +55,10 @@ class CategoriesFixtures extends Fixture
         $category->setSlug($this->slugger->slug($category->getName())->lower());
         $category->setParent($parent);
         $manager->persist($category);
+
+        //stock a reference that can be returned in the ProductFixtures
+        $this->addReference('cat-' . $this->counter, $category);
+        $this->counter++;
 
         return $category;
     }
