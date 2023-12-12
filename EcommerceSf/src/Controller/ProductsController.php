@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Products;
+use App\Repository\ProductsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,12 +20,10 @@ class ProductsController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'details')]
-    public function details($slug, EntityManagerInterface $entityManager): Response
+    public function details($slug, ProductsRepository $productsRepository): Response
     {
-        $repository = $entityManager->getRepository(Products::class);
-        $product = $repository->findOneBy(['slug' => $slug]);
         return $this->render('products/details.html.twig', [
-            'product' => $product
+            'product' => $productsRepository->findOneBy(['slug' => $slug])
         ]);
     }
 }
