@@ -13,11 +13,12 @@ use Doctrine\ORM\EntityManagerInterface;
 #[Route('/categories', name: 'categories_')]
 class CategoriesController extends AbstractController
 {
+    //list all the products of a choosen category, with category slug
     #[Route('/{slug}', name: 'list')]
     public function list($slug, CategoriesRepository $categoriesRepository): Response
     {
-        return $this->render('categories/list.html.twig', [
-            'category' => $categoriesRepository->findOneBy(['slug' => $slug])
-        ]);
+        $category = $categoriesRepository->findOneBy(['slug' => $slug]);
+        $products = $category->getProducts();
+        return $this->render('categories/list.html.twig', compact('category', 'products'));
     }
 }
