@@ -3,11 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Products;
-use App\Repository\ProductsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
 
 
 #[Route('/produits', name: 'products_')]
