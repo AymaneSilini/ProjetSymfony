@@ -20,10 +20,8 @@ class ProductsController extends AbstractController
     }
 
     #[Route('/{slug}', name: 'details')]
-    public function details($slug, ProductsRepository $productsRepository): Response
+    public function details(Products $product): Response
     {
-        return $this->render('products/details.html.twig', [
-            'product' => $productsRepository->findOneBy(['slug' => $slug])
-        ]);
+        return $this->render('products/details.html.twig', compact('product'));
     }
 }
