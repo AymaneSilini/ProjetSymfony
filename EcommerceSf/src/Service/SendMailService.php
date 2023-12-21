@@ -11,12 +11,13 @@ class SendMailService
 
     public function __construct(MailerInterface $mailer)
     {
+        $this->mailer = $mailer;
     }
 
     public function send(string $from, string $to, string $subject, string $template, array $context): void
     {
         //We create the mail
-        $email = (new TemplatedEmail())->from($from)->to($to)->subject($subject)->htmlTemplate("email/$template.html.twig")->context($context);
+        $email = (new TemplatedEmail())->from($from)->to($to)->subject($subject)->htmlTemplate("emails/$template.html.twig")->context($context);
         //We send the mail
         $this->mailer->send($email);
     }
