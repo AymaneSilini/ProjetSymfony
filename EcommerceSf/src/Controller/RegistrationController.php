@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Users;
 use App\Form\RegistrationFormType;
 use App\Security\UsersAuthenticator;
+use App\Service\JWTService;
 use App\Service\SendMailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,8 +19,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RegistrationController extends AbstractController
 {
     #[Route('/inscription', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UsersAuthenticator $authenticator, EntityManagerInterface $entityManager, SendMailService $mail): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        UserAuthenticatorInterface $userAuthenticator,
+        UsersAuthenticator $authenticator,
+        EntityManagerInterface $entityManager,
+        SendMailService $mail,
+        JWTService $jwt
+    ): Response {
         //get the users
         $user = new Users();
         //create the form based on RegistrationType
@@ -37,6 +45,21 @@ class RegistrationController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
+
+            //we generate the JWT of the user
+            //we create the header
+            $header = [
+                'typ' => 'JWT',
+                'alg' => 'HS256'
+            ];
+            //we create the payload
+            $payload = [
+                'user_id' => $user->getId()
+            ];
+            //we generate the token using the JWTService 
+            $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+            dd($token);
+
 
             //we send the verification mail, using the SendMailService
             $mail->send(
