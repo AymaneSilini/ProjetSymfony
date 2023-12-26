@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Users;
 use App\Form\RegistrationFormType;
+use App\Repository\UsersRepository;
 use App\Security\UsersAuthenticator;
 use App\Service\JWTService;
 use App\Service\SendMailService;
@@ -81,8 +82,24 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/verification/{token}', name: 'verify_user')]
-    public function verifyUser($token, JWTService $jwt): Response
+    public function verifyUser($token, JWTService $jwt, UsersRepository $usersRepository, EntityManagerInterface $entityManager): Response
     {
-        dd($jwt->check($token, $this->getParameter('app.jwtsecret')));
+        //we verify if the token's form is valid, if it didn't expired and id it doesn't have been modified
+        if ($jwt->isValid($token) && !$jwt->isExpired($token) && $jwt->check($token, $this->getParameter('app.jwtsecret'))) {
+            //we get the paylad
+            $payload = $jwt->getPayload($token);
+            //we get user from the token, using the payload and the UserRepository
+            $user = $usersRepository->find($payload['user_id']);
+            //if the user exists and hasn't yes verified their account
+            if ($user && !$user->getIsVerified()) {
+                $user->setIsVerified(true);
+                $entityManager->flush($user);
+                $this->addFlash('success', 'Votre inscription a bien été validé');
+                return $this->redirectToRoute('profile_index');
+            }
+        }
+        //the token has a problem, we inform the user and we redirect to the login page
+        $this->addFlash('danger', 'Le token est invalide ou a expiré');
+        return $this->redirectToRoute('app_login');
     }
 }
