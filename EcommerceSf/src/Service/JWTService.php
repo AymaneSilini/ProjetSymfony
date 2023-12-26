@@ -16,16 +16,16 @@ class JWTService
     public function generate(array $header, array $payload, string $secret, int $validity = 10800): string
     {
         //if the token is not valid
-        if ($validity <= 0) {
-            return "";
+        if ($validity > 0) {
+            //get get the actual datetime
+            $now = new DateTimeImmutable();
+            //we add the validity to the actual datetime, to know when it expires
+            $exp = $now->getTimestamp() + $validity;
+            //issued at and expired at
+            $payload['iat'] = $now->getTimestamp();
+            $payload['exp'] = $exp;
         }
-        //get get the actual datetime
-        $now = new DateTimeImmutable();
-        //we add the validity to the actual datetime, to know when it expires
-        $exp = $now->getTimestamp() + $validity;
-        //issued at and expired at
-        $payload['iat'] = $now->getTimestamp();
-        $payload['exp'] = $exp;
+
         //we encode it in base64
         $base64Header = base64_encode(json_encode($header));
         $base64Payload = base64_encode(json_encode($payload));
@@ -79,7 +79,13 @@ class JWTService
     }
 
     //we verify the token's signature
-    public function check(string $token)
+    public function check(string $token, string $secret)
     {
+        //we get the header and the payload
+        $header = $this->getHeader($token);
+        $payload = $this->getPayload($token);
+        //we generate a new token with these values, to see if this signature is good
+        $verifToken = $this->generate($header, $payload, $secret, 0);
+        return $token === $verifToken;
     }
 }
