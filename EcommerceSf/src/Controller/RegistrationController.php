@@ -83,6 +83,6 @@ class RegistrationController extends AbstractController
     #[Route('/verification/{token}', name: 'verify_user')]
     public function verifyUser($token, JWTService $jwt): Response
     {
-        dd($jwt->isExpired($token));
+        dd($jwt->getHeader($token));
     }
 }

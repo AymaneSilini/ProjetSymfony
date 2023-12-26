@@ -50,6 +50,16 @@ class JWTService
         ) === 1;
     }
 
+    //we get the header
+    public function getHeader(string $token): array
+    {
+        //we explode he token
+        $array = explode('.', $token);
+        //we decode the payload
+        $header = json_decode(base64_decode($array[0]), true);
+        return $header;
+    }
+
     //we get the payload
     public function getPayload(string $token): array
     {
@@ -66,5 +76,10 @@ class JWTService
         $payload = $this->getPayload($token);
         $now = new DateTimeImmutable();
         return $payload['exp'] < $now->getTimestamp();
+    }
+
+    //we verify the token's signature
+    public function check(string $token)
+    {
     }
 }
