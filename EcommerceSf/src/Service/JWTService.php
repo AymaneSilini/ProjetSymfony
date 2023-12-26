@@ -59,4 +59,12 @@ class JWTService
         $payload = json_decode(base64_decode($array[1]), true);
         return $payload;
     }
+
+    //we verify if the token has expired
+    public function isExpired(string $token): bool
+    {
+        $payload = $this->getPayload($token);
+        $now = new DateTimeImmutable();
+        return $payload['exp'] < $now->getTimestamp();
+    }
 }
