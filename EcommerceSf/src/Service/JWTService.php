@@ -41,4 +41,22 @@ class JWTService
         $jwt = $base64Header . '.' . $base64Payload . '.' . $base64Signature;
         return $jwt;
     }
+    //we verify the structure of the token
+    public function isValid(string $token): bool
+    {
+        return preg_match(
+            '/^[a-zA-Z0-9\-\_\=]+\.[a-zA-Z0-9\-\_\=]+\.[a-zA-Z0-9\-\_\=]+$/',
+            $token
+        ) === 1;
+    }
+
+    //we get the payload
+    public function getPayload(string $token): array
+    {
+        //we explode he token
+        $array = explode('.', $token);
+        //we decode the payload
+        $payload = json_decode(base64_decode($array[1]), true);
+        return $payload;
+    }
 }
