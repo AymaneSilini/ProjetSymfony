@@ -58,16 +58,14 @@ class RegistrationController extends AbstractController
             ];
             //we generate the token using the JWTService 
             $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
-            dd($token);
 
-
-            //we send the verification mail, using the SendMailService
+            //we send the verification mail, using the SendMailService, and the token for the verification
             $mail->send(
                 'no-reply@monsite.net',
                 $user->getEmail(),
                 'Activation de votre compte sur le site e-commerce',
                 'register',
-                compact('user')
+                compact('user', 'token')
             );
             //if the user is created, it authenticate and connect the user
             return $userAuthenticator->authenticateUser(
@@ -80,5 +78,11 @@ class RegistrationController extends AbstractController
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
+    }
+
+    #[Route('/verification/{token}', name: 'verify_user')]
+    public function verifyUser($token): Response
+    {
+        dd($token);
     }
 }
