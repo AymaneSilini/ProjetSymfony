@@ -94,12 +94,45 @@ class RegistrationController extends AbstractController
             if ($user && !$user->getIsVerified()) {
                 $user->setIsVerified(true);
                 $entityManager->flush($user);
-                $this->addFlash('success', 'Votre inscription a bien été validé');
+                $this->addFlash('success', 'Votre compte a bien été activé');
                 return $this->redirectToRoute('profile_index');
             }
         }
         //the token has a problem, we inform the user and we redirect to the login page
         $this->addFlash('danger', 'Le token est invalide ou a expiré');
         return $this->redirectToRoute('app_login');
+    }
+
+    #[Route('/renvoieverification', name: 'resend_verify_user')]
+    public function resendVerifyUser(JWTService $jwt, SendMailService $mail, UsersRepository $usersRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('danger', 'Vous devez être connecté pour accéder à cette page');
+            return $this->redirectToRoute('app_login');
+        }
+        if ($user->getIsVerified()) {
+            $this->addFlash('warning', 'Vous avez déjà activé votre compte');
+            return $this->redirectToRoute('profile_index');
+        }
+
+        $header = [
+            'typ' => 'JWT',
+            'alg' => 'HS256'
+        ];
+        $payload = [
+            'user_id' => $user->getId()
+        ];
+        $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+
+        $mail->send(
+            'no-reply@monsite.net',
+            $user->getEmail(),
+            'Activation de votre compte sur le site e-commerce',
+            'register',
+            compact('user', 'token')
+        );
+        $this->addFlash('success', 'Un e-mail de vérification vous a été renvoyé.');
+        return $this->redirectToRoute('profile_index');
     }
 }
