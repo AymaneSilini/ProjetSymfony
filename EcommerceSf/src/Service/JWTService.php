@@ -15,9 +15,8 @@ class JWTService
      */
     public function generate(array $header, array $payload, string $secret, int $validity = 10800): string
     {
-        //if the token is not valid
         if ($validity > 0) {
-            //get get the actual datetime
+            //get the actual datetime
             $now = new DateTimeImmutable();
             //we add the validity to the actual datetime, to know when it expires
             $exp = $now->getTimestamp() + $validity;
@@ -85,6 +84,7 @@ class JWTService
         $header = $this->getHeader($token);
         $payload = $this->getPayload($token);
         //we generate a new token with these values, to see if this signature is good
+        //we set validity at 0 to skip the part where we initialize iat and exp, because we already have it with getPayload
         $verifToken = $this->generate($header, $payload, $secret, 0);
         return $token === $verifToken;
     }
