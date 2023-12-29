@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\ResetPasswordRequestFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,6 +34,9 @@ class SecurityController extends AbstractController
     #[Route(path: '/oublie-mdp', name: 'forgotten_password')]
     public function forgottenPassword(): Response
     {
-        return $this->render('security/reset_password_request.html.twig');
-        }
+        $form = $this->createForm(ResetPasswordRequestFormType::class);
+        return $this->render('security/reset_password_request.html.twig', [
+            'requestPassForm' => $form->createView()
+        ]);
+    }
 }
