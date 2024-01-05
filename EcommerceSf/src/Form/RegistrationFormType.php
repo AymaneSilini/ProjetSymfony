@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class RegistrationFormType extends AbstractType
 {
@@ -24,7 +25,13 @@ class RegistrationFormType extends AbstractType
                     'class' => 'form-control',
                     'placeholder' => 'exemple@email.fr',
                 ],
-                'label' => 'E-mail'
+                'label' => 'E-mail',
+                'constraints' => [
+                    new Assert\Email([
+                        'message' => 'L\'adresse email "{{ value }}" n\'est pas valide.',
+                        'mode' => 'strict',
+                    ]),
+                ],
             ])
             ->add('lastname', TextType::class, [
                 'attr' => [
@@ -63,7 +70,13 @@ class RegistrationFormType extends AbstractType
                     'placeholder' => 'Ex : 38130',
 
                 ],
-                'label' => 'Code postal'
+                'label' => 'Code postal',
+                'constraints' => [
+                    new Assert\Regex([
+                        'pattern' => '/^\d{5}$/',
+                        'message' => 'Le code postal doit contenir exactement 5 chiffres.',
+                    ]),
+                ],
             ])
             ->add('RGPDConsent', CheckboxType::class, [
                 'mapped' => false,
@@ -85,11 +98,11 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Mot de passe',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Veuillez entrer un mot de passe',
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),

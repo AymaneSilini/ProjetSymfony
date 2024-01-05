@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ResetPasswordRequestFormType extends AbstractType
 {
@@ -13,11 +14,17 @@ class ResetPasswordRequestFormType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label' => 'E-mail',
                 'attr' => [
+                    'class' => 'form-control',
                     'placeholder' => 'exemple@email.fr',
-                    'class' => 'form-control'
-                ]
+                ],
+                'label' => 'E-mail',
+                'constraints' => [
+                    new Assert\Email([
+                        'message' => 'L\'adresse email "{{ value }}" n\'est pas valide.',
+                        'mode' => 'strict',
+                    ]),
+                ],
             ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\ResetPasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
 use App\Repository\UsersRepository;
 use App\Service\SendMailService;
@@ -9,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
@@ -19,9 +21,9 @@ class SecurityController extends AbstractController
     #[Route(path: '/connexion', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
+        if ($this->getUser()) {
+            return $this->redirectToRoute('main');
+        }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -60,9 +62,10 @@ class SecurityController extends AbstractController
                     'reset_password',
                     compact('url', 'user')
                 );
-                $this->addFlash('danger', 'Un problème est survenue');
+                $this->addFlash('success', 'Un e-mail de changement de mot de passe vous a été renvoyé');
+                return $this->redirectToRoute('main');
             }
-            $this->addFlash('success', 'Un e-mail de changement de mot de passe vous a été renvoyé');
+            $this->addFlash('danger', 'Un problème est survenue');
             return $this->redirectToRoute('app_login');
         }
 
@@ -72,8 +75,25 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/oublie-mdp/{token}', name: 'reset_password')]
-    public function resetPassword(Request $request, UsersRepository $usersRepository, TokenGeneratorInterface $tokenGenerator, EntityManagerInterface $entityManager): Response
+    public function resetPassword(string $token, Request $request, UsersRepository $usersRepository, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
-        return $this->render('security/reset_password.html.twig', []);
+        $user = $usersRepository->findOneByResetToken($token);
+        if ($user) {
+            $form = $this->createForm(ResetPasswordFormType::class);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $user->setResetToken('');
+                $user->setPassword($passwordHasher->hashPassword($user, $form->get('password')->getData()));
+                $entityManager->persist($user);
+                $entityManager->flush();
+                $this->addFlash('success', 'Votre mot de passe a bien été modifié.');
+                return $this->redirectToRoute('app_login');
+            }
+            return $this->render('security/reset_password.html.twig', [
+                'passForm' => $form->createView()
+            ]);
+        }
+        $this->addFlash('danger', 'Jeton invalide');
+        return $this->redirectToRoute('app_login');
     }
 }
