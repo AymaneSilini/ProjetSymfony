@@ -4,11 +4,11 @@
 
 {% block body %}
 
-<section class="container my-3">
-    <div class="row">
-        <div class="col">
+<section class="container my-5">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6">
             <form method="post">
-            
+
                 {% if error %}
                     <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
                 {% endif %}
@@ -19,7 +19,7 @@
                     </div>
                 {% endif %}
 
-                <h1 class="h3 mb-3 font-weight-normal">Connexion</h1>
+                <h1 class="h3 mb-3 font-weight-normal text-center">Connexion</h1>
                 <label for="inputEmail">Email</label>
                 <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
                 <label for="inputPassword">Mot de passe</label>
@@ -29,16 +29,17 @@
                     value="{{ csrf_token('authenticate') }}"
                 >
 
-                <button class="btn btn-lg btn-primary my-3" type="submit">
-                    Se connecter
-                </button>
-                <a href = "{{path('app_register')}}" class="btn btn-secondary">Créer un compte</a>
-                <a href="{{ path('forgotten_password')}}">Mot de pass oublié</a>
+                <div class="text-center">
+                    <button class="btn btn-lg btn-primary my-3" type="submit">
+                        Se connecter
+                    </button>
+                    <a href="{{ path('app_register') }}" class="btn btn-secondary">Créer un compte</a>
+                    <a href="{{ path('forgotten_password') }}">Mot de passe oublié</a>
+                </div>
 
             </form>
         </div>
     </div>
 </section>
-
 
 {% endblock %}

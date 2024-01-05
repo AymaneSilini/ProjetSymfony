@@ -3,38 +3,37 @@
 {% block title %}Inscription{% endblock %}
 
 {% block body %}
-    <section class="container">
-        <div class="row">
-            <div class="col">
-                <h1>Inscription</h1>
-                    {{ form_start(registrationForm) }}
+    <section class="container my-5">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-6">
+                <h1 class="h3 mb-3 font-weight-normal text-center">Inscription</h1>
+                {{ form_start(registrationForm) }}
 
-                        <fieldset class="mb-3">
-                            <legend>Mon identité</legend>
-                            {{ form_row(registrationForm.lastname) }}
-                            {{ form_row(registrationForm.firstname) }}
-                        </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Mon identité</legend>
+                    {{ form_row(registrationForm.lastname) }}
+                    {{ form_row(registrationForm.firstname) }}
+                </fieldset>
 
-                        <fieldset class="mb-3">
-                            <legend>Mes coordonnées</legend>
-                            {{ form_row(registrationForm.address) }}
-                            {{ form_row(registrationForm.city) }}
-                            {{ form_row(registrationForm.zipcode) }}
-                        </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Mes coordonnées</legend>
+                    {{ form_row(registrationForm.address) }}
+                    {{ form_row(registrationForm.city) }}
+                    {{ form_row(registrationForm.zipcode) }}
+                </fieldset>
 
-                         <fieldset class="mb-3">
-                            <legend>Mes identifiants</legend>
-                            {{ form_row(registrationForm.email) }}
-                            {{ form_row(registrationForm.plainPassword) }}
-                        </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Mes identifiants</legend>
+                    {{ form_row(registrationForm.email) }}
+                    {{ form_row(registrationForm.plainPassword) }}
+                </fieldset>
 
-                        {{ form_row(registrationForm.RGPDConsent) }}
+                {{ form_row(registrationForm.RGPDConsent) }}
 
-                        <button type="submit" class="btn btn-primary btn-lg my-3">S'inscrire</button>
-                        <a>Vous avez déjà un compte ?</a> <a href = "{{path('app_login')}}">Connectez vous ici !</a>
-                    {{ form_end(registrationForm) }}
+                <button type="submit" class="btn btn-primary btn-lg my-3 d-block mx-auto">S'inscrire</button>
+                <p class="text-center">Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous ici !</a></p>
+                {{ form_end(registrationForm) }}
             </div>
         </div>
     </section>
-    
 {% endblock %}
