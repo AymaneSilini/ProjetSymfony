@@ -43,6 +43,17 @@
 				<p>Prix :
 					{{product.price / 100 }}
 					€</p>
+				{% if (product.stock <= 0) %}
+					<p class="text-danger">Produit en rupture de stock</p>
+				{% else %}
+					<a href="#" class="btn btn-success">Ajouter au panier</a>
+					{% if (product.stock <= 3) %}
+						<p class="text-warning">Attention, il ne reste plus que
+							{{product.stock}}
+							{{ (product.stock == 1) ? "article." : "articles."}}
+						</p>
+					{% endif %}
+				{% endif %}
 			</div>
 		</section>
 	</main>
