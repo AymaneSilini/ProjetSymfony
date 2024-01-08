@@ -18,7 +18,7 @@
                             <h2 class="card-title text-center">{{ product.name }}</h2>
                             <p class="card-text">{{ product.description }}</p>
                             <div class="text-center">
-                                <a href="#" class="btn btn-primary btn-block">Voir les détails</a>
+                                <a href="{{ path('products_details', {"slug": product.slug} )}}" class="btn btn-primary btn-block">Voir les détails</a>
                             </div>
                         </div>
                     </article>
