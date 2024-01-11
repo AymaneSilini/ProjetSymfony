@@ -1,61 +1,63 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Détails de
-	{{product.name}}
+	{{ product.name }}
 {% endblock %}
 
 {% block body %}
 	<main class="container">
 		<section class="row justify-content-center">
 			<div class="col-12 text-center">
-				<h1>{{product.name}}</h1>
+				<h1>{{ product.name }}</h1>
 			</div>
-			<div class="col-6">
-				<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-					<div class="carousel-indicators">
-						{% for iteration in 1.. product.images|length %}
-							<button type="button" style="border: 1px solid #000;" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{iteration - 1}}" {{ ( loop.first ) ? 'class = "active" aria-current = "true"' : '' }} aria-label="Slide {{iteration - 1}}"></button>
-						{% endfor %}
+			<div class="col-6 position-relative">
+				{% if product.images is not empty  %}
+					<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+						<div class="carousel-indicators">
+							{% for iteration in 1.. product.images|length %}
+								<button type="button" style="border: 1px solid #000;" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ iteration - 1 }}" {{ (loop.first) ? 'class="active" aria-current="true"' : '' }} aria-label="Slide {{ iteration - 1 }}"></button>
+							{% endfor %}
+						</div>
+						<div class="carousel-inner">
+							{% for image in product.images %}
+								<div class="carousel-item {{ (loop.first) ? 'active' : '' }}">
+									<img class="d-block w-100" src="{{ asset('assets/uploads/' ~ image.name) }}" alt="{{ product.name }}">
+								</div>
+							{% endfor %}
+						</div>
+						<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Previous</span>
+						</button>
+						<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+							<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Next</span>
+						</button>
 					</div>
-					<div class="carousel-inner">
-						{% for image in product.images %}
-							<div class="carousel-item {{ ( loop.first ) ? 'active' : '' }}">
-								<img class="d-block w-100" src="{{ asset('assets/uploads/') ~ image.name }}" alt="{{product.name}}">
-							</div>
-						{% endfor %}
-					</div>
-					<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-						<span class="visually-hidden">Previous</span>
-					</button>
-					<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-						<span class="carousel-control-next-icon" aria-hidden="true"></span>
-						<span class="visually-hidden">Next</span>
-					</button>
-				</div>
-			</div>
-			<div class="col-6">
-				<p>{{product.description}}
-				</p>
-				<p>
-					Catégories :
-					{{product.categories.name}}</p>
-				<p>Prix :
-					{{product.price / 100 }}
-					€</p>
-				{% if (product.stock <= 0) %}
-					<p class="text-danger">Produit en rupture de stock</p>
 				{% else %}
-					<a href="#" class="btn btn-success">Ajouter au panier</a>
-					{% if (product.stock <= 3) %}
-						<p class="text-warning">Attention, il ne reste plus que
-							{{product.stock}}
-							{{ (product.stock == 1) ? "article." : "articles."}}
-						</p>
-					{% endif %}
+					<img class="d-block w-100" src="{{ asset('assets/uploads/no_image.jpg') }}" alt="Aucune image pour {{ product.name }}"/>
 				{% endif %}
+			</div>
+			<div class="col-6 d-flex align-items-center">
+				<div>
+					<p>{{ product.description }}</p>
+					<p>Catégories :
+						{{ product.categories.name }}</p>
+					<p>Prix :
+						{{ product.price / 100 }}
+						€</p>
+					{% if product.stock <= 0 %}
+						<p class="text-danger">Produit en rupture de stock</p>
+					{% else %}
+						<a href="#" class="btn btn-success">Ajouter au panier</a>
+						{% if product.stock <= 3 %}
+							<p class="text-warning">Attention, il ne reste plus que
+								{{ product.stock }}
+								{{ (product.stock == 1) ? "article." : "articles." }}</p>
+						{% endif %}
+					{% endif %}
+				</div>
 			</div>
 		</section>
 	</main>
-
 {% endblock %}
